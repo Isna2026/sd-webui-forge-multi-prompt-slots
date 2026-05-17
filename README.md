@@ -14,6 +14,7 @@ Compatibility with other WebUI environments or cloud deployments is untested and
 
 ## Overview
 This extension manages up to 30 prompt slots in Stable Diffusion WebUI Forge, enabling batch generation and configuration saving. It is designed for users who find the standard "Prompts from file or textbox" feature cumbersome or prefer a simpler alternative to ComfyUI.
+![Screenshot](Screenshot.png)
 
 ## Main Features
 * **30 Prompt Slots:** Generate images with different prompts across multiple slots in batch. You can also generate only selected slots.
