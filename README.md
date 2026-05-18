@@ -9,11 +9,12 @@ This extension was personally developed by a beginner programmer practicing 'vib
 No major feature updates or bug fixes are planned for this script. Please note that I do not provide individual support for bug reports, improvement requests, or new feature suggestions.
 
 ## Compatibility / Testing Environment
-Testing was performed locally on SD WebUI Forge.
+Testing was performed locally on SD WebUI Forge and Forge neo.
 Compatibility with other WebUI environments or cloud deployments is untested and not guaranteed.
 
 ## Overview
 This extension manages up to 30 prompt slots in Stable Diffusion WebUI Forge, enabling batch generation and configuration saving. It is designed for users who find the standard "Prompts from file or textbox" feature cumbersome or prefer a simpler alternative to ComfyUI.
+![Screenshot](Screenshot.png)
 
 ## Main Features
 * **30 Prompt Slots:** Generate images with different prompts across multiple slots in batch. You can also generate only selected slots.
@@ -157,7 +158,7 @@ MIT License
 本スクリプトに今後の大きな機能追加や不具合修正の予定はありません、また個別の不具合、改善要望、機能追加には対応できません
 
 ## 動作確認
-動作確認は、SD WebUI Forgeでローカル環境で行いました。
+動作確認は、SD WebUI Forge,Forge neoでローカル環境で行いました。
 他のWebUI環境やクラウドでの動作は未検証のため保証しません。
 
 ## 本拡張機能の概要 
@@ -250,40 +251,40 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
 
   標準のX/Y/Z plotでPrompt S/Rが使いにくいので、プロンプトボックスに直接記述できるようにしました(Seed値などは指定できない簡易版です)
 
-* プロンプト中に@@tag1;tag2;tag3@@のように記入します
-* プロンプト中に複数配置可能ですが、 @@の入れ子構造には対応していません。@@中にワイルドカードを配置した場合の挙動については検証していません
-* @@…@@を含むプロンプトで、Inline XYZを無効化して生成すると、@@内の最初のtagが使用されます
+* プロンプト中に`@@tag1;tag2;tag3@@`のように記入します
+* プロンプト中に複数配置可能ですが、 `@@`の入れ子構造には対応していません。`@@`中にワイルドカードを配置した場合の挙動については検証していません
+* `@@...@@`を含むプロンプトで、Inline XYZを無効化して生成すると、`@@`内の最初のtagが使用されます
   メインのプロンプト欄にも配置可能です(本スクリプトが有効でないときには機能しません)
-* 画像生成時にプロンプトから@@は除去されます
+* 画像生成時にプロンプトから`@@`は除去されます
 
   **Caution!**
   @@…@@を増やすと乗算的に生成枚数が増大するため注意してください。
 
   **記入例:**
-  @@red;blue;green@@ → red、blue、greenの3枚の画像を生成
-  @@red,blue,green;blue,green,red@@ → 疑似的な語順入れ替えにより語順の影響を確認
+  `@@red;blue;green@@` → red、blue、greenの3枚の画像を生成
+  `@@red,blue,green;blue,green,red@@` → 疑似的な語順入れ替えにより語順の影響を確認
 
 ## Inline Size指定機能の説明
 
 標準機能のPrompts from file or textboxでもサイズ指定はできますが、複数サイズの一括出力などには対応しておらず、また指定方法も面倒だったのでプロンプトボックスで直接サイズ指定できるようにしました
 
-* プロンプトに\$\$Width,Height\$\$のように記入します
+* プロンプトに`$$Width,Height$$`のように記入します
 * メインのポジティブプロンプト欄と各Slotのポジティブプロンプト欄両方に配置できます
 * メインプロンプトに記述された際には、生成されるすべてに適用されます。各Slotに記述された際には、そのslotの生成に適用されます。
 * 同一のslotに、2つ以上の配置はできません。また入れ子構造には対応していません。
 * 2つ以上配置されているときは、前方の指定が優先されます。
 * 各Slotに配置したときには、各々指定されたサイズで画像が生成されます。
 * メインのプロンプト欄とslotの両方に配置された際には、メインのプロンプト欄の記述が優先され、slotの記述は無視されます
-* \$\$Width1,Height1;Width2,Height2\$\$のように記述すると、異なる画像サイズの画像が一括で生成されます。
-* 画像生成時にプロンプトから\$\$は除去されます
+* `$$Width1,Height1;Width2,Height2$$`のように記述すると、異なる画像サイズの画像が一括で生成されます。
+* 画像生成時にプロンプトから`$$`は除去されます
 * 指定可能範囲は64~2048pxです。下限値以下の指定は64に、上限値以上の指定は2048になります。数値以外の場合、WebUIの設定解像度に戻ります。
  
   **Caution!**
-  \$\$…\$\$を増やすと乗算的に生成枚数が増大するため注意してください。
+  `$$...$$`を増やすと乗算的に生成枚数が増大するため注意してください。
 
 **記入例:**
-\$\$1024,512\$\$ → 1024x512pxの画像が生成されます。
-\$\$1024,512;512,512;1024,1024\$\$ → 1024x512,512x512,1024x1024で生成されます。
+`$$1024,512$$` → 1024x512pxの画像が生成されます。
+`$$1024,512;512,512;1024,1024$$` → 1024x512,512x512,1024x1024で生成されます。
 
 ## プロンプトへのコメントアウト機能について
 標準機能でも#でコメントアウトできますが、生成時にプロンプトの改行が残ってしまいます。コメントをつけて改行しても、生成時には除去され、結合されるようにしました
