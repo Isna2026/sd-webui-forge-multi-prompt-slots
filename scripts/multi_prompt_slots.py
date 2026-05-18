@@ -43,6 +43,7 @@ LOCALIZATION = {
         "toggle_more": "Show More",
         "toggle_less": "Show Less",
         "clear_btn": "Clear All Prompts",
+        "clear_slot_btn": "Clear Slots",
         "gen_btn": "Generate (Multi)",
         "check_btn": "Check Image Count",
         "slot_p": "Positive",
@@ -73,6 +74,7 @@ LOCALIZATION = {
         "toggle_more": "表示を増やす",
         "toggle_less": "表示を減らす",
         "clear_btn": "全プロンプトをクリア",
+        "clear_slot_btn": "スロットをクリア",
         "gen_btn": "生成 (Multi)",
         "check_btn": "事前に枚数を確認",
         "slot_p": "Positive",
@@ -140,13 +142,16 @@ class Script(scripts.Script):
 
             # Utility Buttons
             with gr.Row():
-                gen_btn_clone = gr.Button(get_text("gen_btn"), variant="primary", elem_id="multi_prompt_gen_clone")
-                interrupt_btn_clone = gr.Button("Interrupt", variant="stop", elem_id="multi_prompt_interrupt_clone")
                 toggle_btn = gr.Button(get_text("toggle_btn"))
                 clear_all_btn = gr.Button(get_text("clear_btn"), variant="stop")
+                clear_slot_btn = gr.Button(get_text("clear_slot_btn"), variant="secondary")
 
+            gr.HTML("<div style='height: 20px;'></div>")
+            
             # --- Image count check button and result row ---
             with gr.Row(elem_id="multi_prompt_counter_row"):
+                gen_btn_clone = gr.Button(get_text("gen_btn"), variant="primary", elem_id="multi_prompt_gen_clone")
+                interrupt_btn_clone = gr.Button("Interrupt", variant="stop", elem_id="multi_prompt_interrupt_clone")
                 check_count_btn = gr.Button(get_text("check_btn"), variant="secondary")
                 count_display = gr.HTML(value="<span style='color: #2ed573; font-weight: bold;'>- images</span>", elem_id="multi_prompt_count_display")
 
@@ -248,7 +253,7 @@ class Script(scripts.Script):
                 
                 # Count the number of size specifications on the main side
                 main_sizes_count = 1
-                m_match = None  # Initialized here to prevent UnboundLocalError
+                m_match = None
                 if size_control_enabled:
                     m_match = re.search(r"\$\$(.*?)\$\$", str(raw_base_pos), flags=re.DOTALL)
                     if m_match:
@@ -309,6 +314,7 @@ class Script(scripts.Script):
             upload_file.change(fn=load_from_file_json, inputs=[upload_file], outputs=[self.main_p_ref, self.main_n_ref, p_mode, n_mode, seed_mode, gen_filter, main_only, inline_xyz, size_control] + prompt_data)
             
             clear_all_btn.click(fn=lambda: ["", ""] + [get_text("mode_append"), get_text("mode_append"), get_text("seed_rand_img"), "", False, True, True] + [""] * 60, inputs=None, outputs=[self.main_p_ref, self.main_n_ref, p_mode, n_mode, seed_mode, gen_filter, main_only, inline_xyz, size_control] + prompt_data)
+            clear_slot_btn.click(fn=lambda: [get_text("mode_append"), get_text("mode_append"), get_text("seed_rand_img"), "", False, True, True] + [""] * 60, inputs=None, outputs=[p_mode, n_mode, seed_mode, gen_filter, main_only, inline_xyz, size_control] + prompt_data)
 
             def toggle_visibility(current_state):
                 new_state = not current_state
@@ -438,6 +444,7 @@ class Script(scripts.Script):
         
         # Extract main resolution variants if available
         main_sizes = []
+        m_match = None
         if size_control_enabled:
             m_match = re.search(r"\$\$(.*?)\$\$", str(raw_base_pos), flags=re.DOTALL)
         if m_match:
