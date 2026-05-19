@@ -489,7 +489,7 @@ class Script(scripts.Script):
 
         # Build task queue
         tasks = []
-        original_n_iter, append_label = p.n_iter, get_text("mode_append")
+        original_n_iter, append_label, original_batch_size, original_seed = p.n_iter, get_text("mode_append"), p.batch_size, p.seed
         for b in range(original_n_iter):
             for m_pos in base_pos_variants:
                 for m_neg in base_neg_variants:
@@ -551,7 +551,7 @@ class Script(scripts.Script):
             except Exception: continue
 
         # Restore original settings
-        p.n_iter, p.prompt, p.negative_prompt = original_n_iter, raw_base_pos, raw_base_neg
+        p.n_iter, p.prompt, p.negative_prompt, p.batch_size, p.seed = original_n_iter, raw_base_pos, raw_base_neg, original_batch_size, original_seed
         return Processed(p, all_images, p.seed, "", infotexts=infotexts)
 
     def _add_slot_tasks(self, tasks, b, m_pos, m_neg, s_item, sw, sh, p_mode, n_mode, append_label, inline_xyz_enabled):
