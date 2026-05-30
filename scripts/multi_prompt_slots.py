@@ -250,12 +250,14 @@ class Script(scripts.Script):
             # --- Backend: Logic to calculate the number of pure prompt combinations ---
             def calculate_pure_prompt_images(raw_base_pos, raw_base_neg, gen_filter_text, main_only, inline_xyz_enabled, size_control_enabled, *prompts):
                 filter_indices = set() if main_only else self.parse_filter(gen_filter_text, max_val=30)
+                logic_base_pos = "\n".join([l.split('#')[0] for l in str(raw_base_pos).splitlines()])
+                logic_base_neg = "\n".join([l.split('#')[0] for l in str(raw_base_neg).splitlines()])
                 
                 # Count the number of size specifications on the main side
                 main_sizes_count = 1
                 m_match = None
                 if size_control_enabled:
-                    m_match = re.search(r"\$\$(.*?)\$\$", str(raw_base_pos), flags=re.DOTALL)
+                    m_match = re.search(r"\$\$(.*?)\$\$", logic_base_pos, flags=re.DOTALL)
                     if m_match:
                         valid_pairs = 0
                         for pair in m_match.group(1).split(';'):
@@ -266,8 +268,8 @@ class Script(scripts.Script):
                         if valid_pairs > 0: main_sizes_count = valid_pairs
 
                 # Number of XYZ expansions for the main prompt
-                base_pos_variants = len(self.parse_inline_xyz(raw_base_pos)) if inline_xyz_enabled else 1
-                base_neg_variants = len(self.parse_inline_xyz(raw_base_neg)) if inline_xyz_enabled else 1
+                base_pos_variants = len(self.parse_inline_xyz(logic_base_pos)) if inline_xyz_enabled else 1
+                base_neg_variants = len(self.parse_inline_xyz(logic_base_neg)) if inline_xyz_enabled else 1
                 main_loop_multiplier = base_pos_variants * base_neg_variants
 
                 # Process each slot data
@@ -276,10 +278,12 @@ class Script(scripts.Script):
                     slot_num = (i // 2) + 1
                     if slot_num not in filter_indices: continue
                     pos, neg = str(prompts[i]).strip(), str(prompts[i+1]).strip()
-                    if not pos and not neg: continue
+                    logic_pos = "\n".join([l.split('#')[0] for l in pos.splitlines()])
+                    logic_neg = "\n".join([l.split('#')[0] for l in neg.splitlines()])
+                    if not logic_pos and not logic_neg: continue
                     
                     slot_sizes_count = 1
-                    s_match = re.search(r"\$\$(.*?)\$\$", pos, flags=re.DOTALL)
+                    s_match = re.search(r"\$\$(.*?)\$\$", logic_pos, flags=re.DOTALL)
                     if size_control_enabled and m_match is None and s_match:
                         valid_pairs = 0
                         for pair in s_match.group(1).split(';'):
@@ -289,7 +293,7 @@ class Script(scripts.Script):
                             except: continue
                         if valid_pairs > 0: slot_sizes_count = valid_pairs
                     
-                    active_slots.append({"raw_p": pos, "raw_n": neg, "sizes_count": slot_sizes_count})
+                    active_slots.append({"raw_p": logic_pos, "raw_n": logic_neg, "sizes_count": slot_sizes_count})
 
                 if not active_slots:
                     active_slots = [{"raw_p": "", "raw_n": "", "sizes_count": 1}]
@@ -440,13 +444,15 @@ class Script(scripts.Script):
             return Processed(p, [], p.seed, "Generation already in progress.")
 
         raw_base_pos, raw_base_neg = p.prompt, p.negative_prompt
+        logic_base_pos = "\n".join([l.split('#')[0] for l in str(raw_base_pos).splitlines()])
+        logic_base_neg = "\n".join([l.split('#')[0] for l in str(raw_base_neg).splitlines()])
         filter_indices = set() if main_only else self.parse_filter(gen_filter_text, max_val=30)
         
         # Extract main resolution variants if available
         main_sizes = []
         m_match = None
         if size_control_enabled:
-            m_match = re.search(r"\$\$(.*?)\$\$", str(raw_base_pos), flags=re.DOTALL)
+            m_match = re.search(r"\$\$(.*?)\$\$", logic_base_pos, flags=re.DOTALL)
         if m_match:
             for pair in m_match.group(1).split(';'):
                 try:
@@ -459,8 +465,8 @@ class Script(scripts.Script):
                     continue
 
         # Handle inline expansion for base prompts
-        base_pos_variants = [self.cleanup_tags(v) for v in self.parse_inline_xyz(raw_base_pos)] if inline_xyz_enabled else [self.cleanup_tags(raw_base_pos)]
-        base_neg_variants = [self.cleanup_tags(v) for v in self.parse_inline_xyz(raw_base_neg)] if inline_xyz_enabled else [self.cleanup_tags(raw_base_neg)]
+        base_pos_variants = [self.cleanup_tags(v) for v in self.parse_inline_xyz(logic_base_pos)] if inline_xyz_enabled else [self.cleanup_tags(logic_base_pos)]
+        base_neg_variants = [self.cleanup_tags(v) for v in self.parse_inline_xyz(logic_base_neg)] if inline_xyz_enabled else [self.cleanup_tags(logic_base_neg)]
 
         # Collect data from active prompt slots
         active_slots = []
@@ -468,9 +474,11 @@ class Script(scripts.Script):
             slot_num = (i // 2) + 1
             if slot_num not in filter_indices: continue
             pos, neg = str(args[i]).strip(), str(args[i+1]).strip()
-            if not pos and not neg: continue
+            logic_pos = "\n".join([l.split('#')[0] for l in pos.splitlines()])
+            logic_neg = "\n".join([l.split('#')[0] for l in neg.splitlines()])
+            if not logic_pos and not logic_neg: continue
             slot_sizes = []
-            s_match = re.search(r"\$\$(.*?)\$\$", pos, flags=re.DOTALL)
+            s_match = re.search(r"\$\$(.*?)\$\$", logic_pos, flags=re.DOTALL)
             if size_control_enabled and not main_sizes and s_match:
                 for pair in s_match.group(1).split(';'):
                     try:
@@ -482,7 +490,7 @@ class Script(scripts.Script):
                     except:
                         continue
             if not slot_sizes: slot_sizes = [(p.width, p.height)]
-            active_slots.append({"raw_p": self.strip_size_tag(pos), "raw_n": self.strip_size_tag(neg), "idx": slot_num, "sizes": slot_sizes})
+            active_slots.append({"raw_p": self.strip_size_tag(logic_pos), "raw_n": self.strip_size_tag(logic_neg), "idx": slot_num, "sizes": slot_sizes})
 
         if not active_slots:
             active_slots = [{"raw_p": "", "raw_n": "", "idx": 0, "sizes": [(p.width, p.height)]}]
