@@ -80,6 +80,9 @@ To reduce the risk of freezing or crashing, the maximum number of images per gen
   Clears prompts in both the main field and all slots.
   **Caution!** No confirmation dialog appears, so save before clicking to avoid accidental loss.
 
+* **Clear Slots**
+  Clears prompts in all slots.
+
 * **Check Image Count**
   Calculates and displays how many images will be generated based on current conditions (prompts, batch count). Displays yellow for >100, red for >500. Recommended when Inline XYZ or Size Control is enabled. If the count seems off, check for unclosed brackets `@@` or `$$`. Note: Batch size is ignored; only batch count works with this script active.
 
@@ -144,6 +147,12 @@ If you encounter an error loading the JSON file, clicking 'Clear All Prompts' ma
 ## Alternative Usage Ideas
 **Using Slots as Temporary Prompt Storage:**
 Enable "Main Only" to ignore slot prompts. Work in the main prompt field, and when you get a good result, paste it into a slot with comments to save progress. Once you have several ideas saved, click Save, disable "Main Only", set mode to Overwrite, and batch generate all slots at the same seed for comparison. You can then select the best prompts and run multiple batches with random seeds.
+
+## Known Issues
+* **Limitation on Button Synchronization:** The background script that synchronizes the disabled/grayed-out status of the generation buttons does not start automatically upon WebUI startup. It is initialized **only after you click the custom "Generate (Multi)" button for the first time**. Until you click it, the custom button will not automatically gray out even if you start generation using the original main "Generate" button.
+             **Workaround:** Simply use the custom "Generate (Multi)" button to start your multi-slot generations. Once clicked, the background sync timer activates, and button states will  synchronize across all subsequent runs.
+
+
 
 ## Licence
 MIT License
@@ -239,6 +248,9 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
 　**Caution!**
    確認画面などは出ないので誤クリックに注意。クリック前にプロンプトの保存を推奨。
 
+* スロットをクリア
+　クリックすると、全スロットのプロンプトをクリア
+
 * 事前に枚数を確認
    クリックすると現在の条件(プロンプト、バッチ回数)で何枚生成されるか計算して表示(100枚以上で黄色表示、500枚以上で赤色表示)
    Inline XYZおよびサイズ指定有効化時には事前枚数チェックを推奨します。
@@ -315,6 +327,10 @@ JSONファイルの読み込み時にエラーが発生した場合は、一度�
 **slotのプロンプト一時保存領域としての利用**
 Mainのみ生成をチェックして有効化しておくと、各slotの記述は無視されます。これを利用してメインのプロンプト欄で作業をし、いい感じのプロンプトになったらプロンプト案としてSlotにそれをペーストして、途中経過を退避させコメントをつけておく。そしてプロンプト案がたまってきたら、一度保存して、mainのみのチェックを外してモードを上書きにし、プロンプト案を同一シードで一括生成して比較。さらに良好なプロンプトのみいくつか選んで、シードを変えながらで複数バッチ生成、というような使い方もできるかもしれません。
 
+## 既知の不具合
+* **生成ボタンの連動同期に関する制限:** WebUI起動後、スクリプト側の「生成(Multi)」ボタンが**一度もクリックされていない間は、ボタンのグレーアウト（無効化）を監視するバックグラウンド処理が開始されません**。そのため、最初にスクリプト側のボタンを押すまでの間は、本家UI側の「生成」ボタンで生成を開始しても、スクリプト側のボタンは自動的にグレーアウトされません。
+         **回避策:** マルチスロット生成を行う際は、通常通りスクリプト側の「生成(Multi)」ボタンから生成を開始してください。一度でもクリックされれば同期タイマーが裏で起動するため、それ以降は本家ボタン・スクリプト側ボタンの双方が正しく連動するようになります。
+  
 ## Licence
 MIT License
 
