@@ -155,12 +155,34 @@ class Script(scripts.Script):
                 check_count_btn = gr.Button(get_text("check_btn"), variant="secondary")
                 count_display = gr.HTML(value="<span style='color: #2ed573; font-weight: bold;'>- images</span>", elem_id=f"{prefix}_multi_prompt_count_display")
 
+            # Custom styling for prompt slots
+            gr.HTML("""
+            <style>
+                .prompt-p textarea {
+                    background-color: #ffffff !important;
+                    border: 1px solid #e6e3e3 !important;
+                }
+                .prompt-p span {
+                    color: #1bad02 !important;
+                    font-weight: bold !important;
+                }
+                .prompt-n textarea {
+                    background-color: #fff8f8 !important;
+                    border: 1px solid #fcdede !important;
+                }
+                .prompt-n span {
+                    color: #c07070 !important;
+                    font-weight: bold !important;
+                }
+            </style>
+            """)
+
             # Prompt Slot Definition (30 slots x 2 textboxes)
             prompt_data = []
             for i in range(30):
                 visible = i < 3
-                p_box = gr.Textbox(label=f"{get_text('slot_p')} {i+1}", lines=2, visible=visible, elem_classes=["prompt"])
-                n_box = gr.Textbox(label=f"{get_text('slot_n')} {i+1}", lines=2, visible=visible, elem_classes=["prompt"])
+                p_box = gr.Textbox(label=f"{get_text('slot_p')} {i+1}", lines=2, visible=visible, elem_classes=["prompt", "prompt-p"])
+                n_box = gr.Textbox(label=f"{get_text('slot_n')} {i+1}", lines=2, visible=visible, elem_classes=["prompt", "prompt-n"])
                 prompt_data.extend([p_box, n_box])
 
             # JS targets for triggering main UI buttons
