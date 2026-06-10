@@ -175,6 +175,7 @@ MIT License
 
 この拡張機能は、Stable Diffusion WebUI Forge で最大30個のプロンプトスロットを管理し、一括生成や設定の保存を可能にします
 SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、またComfyUIは面倒という人向けです。
+本拡張機能は、txt2imgとimg2imgで動作します。
 
 ## 主な機能 
 
