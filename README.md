@@ -52,11 +52,13 @@ To reduce the risk of freezing or crashing, the maximum number of images per gen
   * Random per Image: Assigns a unique random seed to every image.
   * Random within Set: Keeps seeds fixed within each batch but changes them when switching batches.
 
-* **Target Slots**
-  Specifies which slots to generate.
+* **Generation order**
+  Specify the slots to generate and their execution order.
   Examples:
   * Empty: All filled slots.
   * `1,3-5,9-`: Slots 1, 3, 4, 5, and 9 onwards.
+  * `3-1,10,4-9`:Generates in the exact order of 3, 2, 1, 10, 4, 5, 6, 7, 8, 9
+  * `1,1,1,2`:Generates slot 1 three times, followed by slot 2.
   * `main` or `-1`: Ignores slots and generates only using the main prompt.
 
 * **Main Only (Ignore Slots)**
@@ -220,11 +222,13 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
 　画像ごとランダム: すべての画像に異なるSeed値を付与して生成します
 　セット内共通ランダム:バッチ内はSeed値を固定し、バッチ切り替わり時に新たなSeed値を付与して生成します
 
-* 生成対象スロット(Target Slots)
-    どのスロットを生成するか指定します
+* 生成順序(Generation order)
+    生成するスロット及び生成順序を指定します。
 　記入例:
 　空欄:記入のある全スロット
     1,3-5,9-:1,3,4,5,9以降を生成
+　3-1,10,4-9:3,2,1,10,4,5,6,7,8,9の順に生成
+　1,1,1,2:1を3回生成した後に2を生成
 　mainまたは-1: slotを無視してメイン欄のプロンプトのみで生成
 
 * Mainのみ生成(スロット無視) (Main Only (Ignore Slots))
