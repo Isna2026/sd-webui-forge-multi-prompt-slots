@@ -35,7 +35,7 @@ LOCALIZATION = {
         "seed_rand_img": "Random Image",
         "seed_rand_set": "Random Set",
         "seed_info": "Fixed: If -1, seed is locked within the set.",
-        "filter_label": "Target Slots (e.g., 1,3-5,9-)",
+        "filter_label": "Generation order (e.g., 1,3-5,9-)",
         "main_only_label": "Main Only (Ignore Slots)",
         "xyz_label": "Enable Inline XYZ (@@)",
         "size_label": "Enable Size Control ($$)",
@@ -66,7 +66,7 @@ LOCALIZATION = {
         "seed_rand_img": "画像ごとランダム",
         "seed_rand_set": "セット内共通ランダム",
         "seed_info": "固定: -1の場合はセット内でシードを固定します",
-        "filter_label": "生成対象スロット (例: 1,3-5,9-)",
+        "filter_label": "生成順序 (例: 1,3-5,9-)",
         "main_only_label": "Mainのみ生成 (スロット無視)",
         "xyz_label": "Inline XYZ (@@) を有効化",
         "size_label": "サイズ指定 ($$) を有効化",
@@ -271,7 +271,7 @@ class Script(scripts.Script):
 
             # --- Backend: Logic to calculate the number of pure prompt combinations ---
             def calculate_pure_prompt_images(raw_base_pos, raw_base_neg, gen_filter_text, main_only, inline_xyz_enabled, size_control_enabled, *prompts):
-                filter_indices = set() if main_only else self.parse_filter(gen_filter_text, max_val=30)
+                filter_indices = [] if main_only else self.parse_filter(gen_filter_text, max_val=30)
                 logic_base_pos = "\n".join([l.split('#')[0] for l in str(raw_base_pos).splitlines()])
                 logic_base_neg = "\n".join([l.split('#')[0] for l in str(raw_base_neg).splitlines()])
                 
@@ -296,10 +296,10 @@ class Script(scripts.Script):
 
                 # Process each slot data
                 active_slots = []
-                for i in range(0, len(prompts), 2):
-                    slot_num = (i // 2) + 1
-                    if slot_num not in filter_indices: continue
-                    pos, neg = str(prompts[i]).strip(), str(prompts[i+1]).strip()
+                for slot_num in filter_indices:
+                    idx = (slot_num - 1) * 2
+                    if idx >= len(prompts): continue
+                    pos, neg = str(prompts[idx]).strip(), str(prompts[idx+1]).strip()
                     logic_pos = "\n".join([l.split('#')[0] for l in pos.splitlines()])
                     logic_neg = "\n".join([l.split('#')[0] for l in neg.splitlines()])
                     if not logic_pos and not logic_neg: continue
@@ -403,24 +403,28 @@ class Script(scripts.Script):
         elif eid in ["txt2img_neg_prompt", "img2img_neg_prompt"]: self.main_n_ref = component
 
     def parse_filter(self, text, max_val=30):
-        """Parses range strings like '1,3-5,9-' into a set of indices."""
+        """Parses range strings into an ordered list of indices, supporting reverse ranges and duplicates."""
         t = str(text).lower().strip()
-        if t in ["main", "-1"]: return set()
-        if not t or t == "0": return set(range(1, max_val + 1))
-        indices = set()
+        if t in ["main", "-1"]: return []
+        if not t or t == "0": return list(range(1, max_val + 1))
+        indices = []
         for part in t.split(','):
+            part = part.strip()
+            if not part: continue
             if '-' in part:
                 parts = (part + " ").split('-', 1)
                 try:
                     start = int(parts[0].strip()) if parts[0].strip() else 1
                     end = int(parts[1].strip()) if parts[1].strip() else max_val
-                    indices.update(range(min(start, end), min(max(start, end), max_val) + 1))
-                except: continue
+                    step = 1 if start <= end else -1
+                    for val in range(start, end + step, step):
+                        if 0 < val <= max_val: indices.append(val)
+                except ValueError: continue
             else:
                 try:
-                    val = int(part.strip())
-                    if 0 < val <= max_val: indices.add(val)
-                except: continue
+                    val = int(part)
+                    if 0 < val <= max_val: indices.append(val)
+                except ValueError: continue
         return indices
 
     def parse_inline_xyz(self, text):
@@ -468,7 +472,7 @@ class Script(scripts.Script):
         raw_base_pos, raw_base_neg = p.prompt, p.negative_prompt
         logic_base_pos = "\n".join([l.split('#')[0] for l in str(raw_base_pos).splitlines()])
         logic_base_neg = "\n".join([l.split('#')[0] for l in str(raw_base_neg).splitlines()])
-        filter_indices = set() if main_only else self.parse_filter(gen_filter_text, max_val=30)
+        filter_indices = [] if main_only else self.parse_filter(gen_filter_text, max_val=30)
         
         # Extract main resolution variants if available
         main_sizes = []
@@ -492,10 +496,10 @@ class Script(scripts.Script):
 
         # Collect data from active prompt slots
         active_slots = []
-        for i in range(0, len(args), 2):
-            slot_num = (i // 2) + 1
-            if slot_num not in filter_indices: continue
-            pos, neg = str(args[i]).strip(), str(args[i+1]).strip()
+        for slot_num in filter_indices:
+            idx = (slot_num - 1) * 2
+            if idx >= len(args): continue
+            pos, neg = str(args[idx]).strip(), str(args[idx+1]).strip()
             logic_pos = "\n".join([l.split('#')[0] for l in pos.splitlines()])
             logic_neg = "\n".join([l.split('#')[0] for l in neg.splitlines()])
             if not logic_pos and not logic_neg: continue
