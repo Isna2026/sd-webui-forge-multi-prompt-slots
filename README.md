@@ -101,9 +101,9 @@ Designed to replace the cumbersome Prompt S/R in the standard X/Y/Z Plot, allowi
 * The `@@` delimiters are removed from the prompt before image generation.  
 **Caution!** Adding more `@@...@@` blocks will exponentially increase the number of generated images.
 
-**Examples:**
-`@@red;blue;green@@` → Generates 3 images (red, blue, green).
-`@@red,blue,green;blue,green,red@@` → Checks the impact of word order via pseudo-permutation.
+**Examples:**  
+`@@red;blue;green@@` → Generates 3 images (red, blue, green).  
+`@@red,blue,green;blue,green,red@@` → Checks the impact of word order via pseudo-permutation.  
 
 ## Inline Size Control Explanation
 While the standard "Prompts from file or textbox" supports size control, it lacks batch multi-size output and has a cumbersome setup. This feature allows direct size specification in prompt boxes.
@@ -121,9 +121,9 @@ While the standard "Prompts from file or textbox" supports size control, it lack
 
 **Caution!** Adding more `$$...$$` blocks will exponentially increase the number of generated images.
 
-**Examples:**
-`$$1024,512$$` → Generates at 1024x512px.
-`$$1024,512;512,512;1024,1024$$` → Generates at 1024x512, 512x512, and 1024x1024px.
+**Examples:**  
+`$$1024,512$$` → Generates at 1024x512px.  
+`$$1024,512;512,512;1024,1024$$` → Generates at 1024x512, 512x512, and 1024x1024px.  
 
 ## Commenting Feature
 The standard feature allows `#` comments, but newlines often remain after generation. This script removes lines after `#` and joins remaining text during generation.
@@ -277,9 +277,9 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
   **Caution!**
   @@…@@を増やすと乗算的に生成枚数が増大するため注意してください。
 
-  **記入例:**
-  `@@red;blue;green@@` → red、blue、greenの3枚の画像を生成
-  `@@red,blue,green;blue,green,red@@` → 疑似的な語順入れ替えにより語順の影響を確認
+  **記入例:**  
+  `@@red;blue;green@@` → red、blue、greenの3枚の画像を生成  
+  `@@red,blue,green;blue,green,red@@` → 疑似的な語順入れ替えにより語順の影響を確認  
 
 ## Inline Size指定機能の説明
 
@@ -299,9 +299,9 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
   **Caution!**
   `$$...$$`を増やすと乗算的に生成枚数が増大するため注意してください。
 
-**記入例:**
-`$$1024,512$$` → 1024x512pxの画像が生成されます。
-`$$1024,512;512,512;1024,1024$$` → 1024x512,512x512,1024x1024で生成されます。
+**記入例:**  
+`$$1024,512$$` → 1024x512pxの画像が生成されます。  
+`$$1024,512;512,512;1024,1024$$` → 1024x512,512x512,1024x1024で生成されます。  
 
 ## プロンプトへのコメントアウト機能について
 標準機能でも#でコメントアウトできますが、生成時にプロンプトの改行が残ってしまいます。コメントをつけて改行しても、生成時には除去され、結合されるようにしました
