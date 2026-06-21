@@ -13,7 +13,7 @@ Testing was performed locally on SD WebUI Forge and Forge neo.
 Compatibility with other WebUI environments or cloud deployments is untested and not guaranteed.
 
 ## Overview
-This extension manages up to 30 prompt slots in Stable Diffusion WebUI Forge, enabling batch generation and configuration saving. It is designed for users who find the standard "Prompts from file or textbox" feature cumbersome or prefer a simpler alternative to ComfyUI.This extension works in both txt2img and img2img tabs.
+This extension manages up to 30 prompt slots in Stable Diffusion WebUI Forge, enabling batch generation and configuration saving. It is designed for users who find the standard "Prompts from file or textbox" feature cumbersome or prefer a simpler alternative to ComfyUI. This extension works in both txt2img and img2img tabs.
 
 ![Screenshot](Screenshot.png)
 
@@ -53,13 +53,13 @@ To reduce the risk of freezing or crashing, the maximum number of images per gen
   * Random within Set: Keeps seeds fixed within each batch but changes them when switching batches.
 
 * **Generation order**
-  Specify the slots to generate and their execution order.
-  Examples:
-  * Empty: All filled slots.
-  * `1,3-5,9-`: Slots 1, 3, 4, 5, and 9 onwards.
-  * `3-1,10,4-9`:Generates in the exact order of 3, 2, 1, 10, 4, 5, 6, 7, 8, 9
-  * `1,1,1,2`:Generates slot 1 three times, followed by slot 2.
-  * `main` or `-1`: Ignores slots and generates only using the main prompt.
+  Specify the slots to generate and their execution order.  
+  Examples:  
+  * Empty: All filled slots.  
+  * `1,3-5,9-`: Slots 1, 3, 4, 5, and 9 onwards.  
+  * `3-1,10,4-9`:Generates in the exact order of 3, 2, 1, 10, 4, 5, 6, 7, 8, 9  
+  * `1,1,1,2`:Generates slot 1 three times, followed by slot 2.  
+  * `main` or `-1`: Ignores slots and generates only using the main prompt.  
 
 * **Main Only (Ignore Slots)**
   When checked, ignores slot prompts and uses only the main prompt for generation.
@@ -80,8 +80,8 @@ To reduce the risk of freezing or crashing, the maximum number of images per gen
   Toggle the display/hide of slots 4 and beyond.
 
 * **Clear All Prompts**
-  Clears prompts in both the main field and all slots.
-  **Caution!** No confirmation dialog appears, so save before clicking to avoid accidental loss.
+  Clears prompts in both the main field and all slots.  
+     **Caution!** No confirmation dialog appears, so save before clicking to avoid accidental loss.
 
 * **Clear Slots**
   Clears prompts in all slots.
@@ -98,8 +98,7 @@ Designed to replace the cumbersome Prompt S/R in the standard X/Y/Z Plot, allowi
 * Enter tags directly in the prompt like `@@tag1;tag2;tag3@@`.
 * Multiple instances per prompt are supported, but nested `@@` structures are not. Behavior with wildcards inside `@@` has not been tested.
 * If Inline XYZ is disabled during generation, the first tag inside `@@...@@` will be used. Can also be placed in the main prompt field (only works when this script is active).
-* The `@@` delimiters are removed from the prompt before image generation.
-
+* The `@@` delimiters are removed from the prompt before image generation.  
 **Caution!** Adding more `@@...@@` blocks will exponentially increase the number of generated images.
 
 **Examples:**
@@ -152,8 +151,8 @@ If you encounter an error loading the JSON file, clicking 'Clear All Prompts' ma
 Enable "Main Only" to ignore slot prompts. Work in the main prompt field, and when you get a good result, paste it into a slot with comments to save progress. Once you have several ideas saved, click Save, disable "Main Only", set mode to Overwrite, and batch generate all slots at the same seed for comparison. You can then select the best prompts and run multiple batches with random seeds.
 
 ## Known Issues
-* **Limitation on Button Synchronization:** The background script that synchronizes the disabled/grayed-out status of the generation buttons does not start automatically upon WebUI startup. It is initialized **only after you click the custom "Generate (Multi)" button for the first time**. Until you click it, the custom button will not automatically gray out even if you start generation using the original main "Generate" button.
-             **Workaround:** Simply use the custom "Generate (Multi)" button to start your multi-slot generations. Once clicked, the background sync timer activates, and button states will  synchronize across all subsequent runs.
+* **Limitation on Button Synchronization:** The background script that synchronizes the disabled/grayed-out status of the generation buttons does not start automatically upon WebUI startup. It is initialized **only after you click the custom "Generate (Multi)" button for the first time**. Until you click it, the custom button will not automatically gray out even if you start generation using the original main "Generate" button.  
+  **Workaround:** Simply use the custom "Generate (Multi)" button to start your multi-slot generations. Once clicked, the background sync timer activates, and button states will  synchronize across all subsequent runs.
 
 
 
@@ -223,13 +222,13 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
 　セット内共通ランダム:バッチ内はSeed値を固定し、バッチ切り替わり時に新たなSeed値を付与して生成します
 
 * 生成順序(Generation order)
-    生成するスロット及び生成順序を指定します。
-　記入例:
-　空欄:記入のある全スロット
-    1,3-5,9-:1,3,4,5,9以降を生成
-　3-1,10,4-9:3,2,1,10,4,5,6,7,8,9の順に生成
-　1,1,1,2:1を3回生成した後に2を生成
-　mainまたは-1: slotを無視してメイン欄のプロンプトのみで生成
+    生成するスロット及び生成順序を指定します。  
+　記入例:  
+    * 空欄:記入のある全スロット  
+    * `1,3-5,9-`: 1,3,4,5,9以降を生成  
+    * `3-1,10,4-9`:3,2,1,10,4,5,6,7,8,9の順に生成  
+    * `1,1,1,2`:1を3回生成した後に2を生成  
+    * `main` or `-1`: slotを無視してメイン欄のプロンプトのみで生成  
 
 * Mainのみ生成(スロット無視) (Main Only (Ignore Slots))
 　チェックするとslotの記述を無視してメインのプロンプトのみで生成
@@ -237,7 +236,7 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
 * Inline XYZ (@@) を有効化(Enable Inline XYZ (@@))
     チェックするとInline XYZを有効化(詳細は下記)
 
-* サイズ指定(\$\$)を有効化(Enable Size Control(\$\$))
+* サイズ指定(`$$`)を有効化(Enable Size Control(`$$`))
     チェックするとサイズ指定(\$\$)を有効化(詳細は下記)
    
 * 生成(Multi) (Generate (Multi))
@@ -315,10 +314,10 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
 ## ファイルの保存と読み込み
 本機能で作成されたプロンプトは、独自フォーマットのjsonファイルで保存/読み込みされます
 
-* ファイルの保存・読み込みをクリックするとファイル保存/読み込み領域が展開します
+* ファイルの保存・読み込みをクリックするとファイル保存/読み込み領域が展開します  
 **読み込み**
 * 本拡張機能で保存されたjsonファイルを”ここにファイルをドロップ"にドロップすると読み込まれます
-* 別のファイルを読み込みたい際には、"プロンプトファイルを読み込む"の横に表示されるクリアボタン(×ボタン)をクリックすると再読み込みが可能となります
+* 別のファイルを読み込みたい際には、"プロンプトファイルを読み込む"の横に表示されるクリアボタン(×ボタン)をクリックすると再読み込みが可能となります  
 **保存**
 * 現在の設定を保存をクリックすると、プロンプトと生成対象スロットなどの設定がjsonファイルに保存されます
 * ファイルは、Forgeがインストールされているフォルダのoutputs\multi_prompt_configsに保存されます
@@ -334,7 +333,7 @@ JSONファイルの読み込み時にエラーが発生した場合は、一度�
 Mainのみ生成をチェックして有効化しておくと、各slotの記述は無視されます。これを利用してメインのプロンプト欄で作業をし、いい感じのプロンプトになったらプロンプト案としてSlotにそれをペーストして、途中経過を退避させコメントをつけておく。そしてプロンプト案がたまってきたら、一度保存して、mainのみのチェックを外してモードを上書きにし、プロンプト案を同一シードで一括生成して比較。さらに良好なプロンプトのみいくつか選んで、シードを変えながらで複数バッチ生成、というような使い方もできるかもしれません。
 
 ## 既知の不具合
-* **生成ボタンの連動同期に関する制限:** WebUI起動後、スクリプト側の「生成(Multi)」ボタンが**一度もクリックされていない間は、ボタンのグレーアウト（無効化）を監視するバックグラウンド処理が開始されません**。そのため、最初にスクリプト側のボタンを押すまでの間は、本家UI側の「生成」ボタンで生成を開始しても、スクリプト側のボタンは自動的にグレーアウトされません。
+* **生成ボタンの連動同期に関する制限:** WebUI起動後、スクリプト側の「生成(Multi)」ボタンが**一度もクリックされていない間は、ボタンのグレーアウト（無効化）を監視するバックグラウンド処理が開始されません**。そのため、最初にスクリプト側のボタンを押すまでの間は、本家UI側の「生成」ボタンで生成を開始しても、スクリプト側のボタンは自動的にグレーアウトされません。  
          **回避策:** マルチスロット生成を行う際は、通常通りスクリプト側の「生成(Multi)」ボタンから生成を開始してください。一度でもクリックされれば同期タイマーが裏で起動するため、それ以降は本家ボタン・スクリプト側ボタンの双方が正しく連動するようになります。
   
 ## Licence
