@@ -18,6 +18,11 @@ TASK_LIMIT_WARNING = 100
 TASK_LIMIT_MAX = 500
 MAX_RESOLUTION = 2048
 
+# --- Shortcut Settings ---
+# Change this to resolve keyboard shortcut conflicts (e.g., "Ctrl+Alt+S", "Ctrl+Shift+A")
+# Supported format: combinations of 'ctrl', 'alt', 'shift', and a single letter (e.g. 'a', 's', 'z').
+SNAPSHOT_SHORTCUT = "Ctrl+Alt+A"
+
 # --- UI Localization definitions ---
 LOCALIZATION = {
     "en_US": {
@@ -44,6 +49,7 @@ LOCALIZATION = {
         "toggle_less": "Show Less",
         "clear_btn": "Clear All Prompts",
         "clear_slot_btn": "Clear Slots",
+        "snapshot_btn": "Snapshot",
         "gen_btn": "Generate (Multi)",
         "check_btn": "Check Image Count",
         "slot_p": "Positive",
@@ -75,6 +81,7 @@ LOCALIZATION = {
         "toggle_less": "表示を減らす",
         "clear_btn": "全プロンプトをクリア",
         "clear_slot_btn": "スロットをクリア",
+        "snapshot_btn": "スナップショット",
         "gen_btn": "生成 (Multi)",
         "check_btn": "事前に枚数を確認",
         "slot_p": "Positive",
@@ -143,6 +150,7 @@ class Script(scripts.Script):
             # Utility Buttons
             with gr.Row():
                 toggle_btn = gr.Button(get_text("toggle_btn"))
+                snapshot_btn = gr.Button(get_text("snapshot_btn"), elem_id=f"{prefix}_multi_prompt_snapshot")
                 clear_all_btn = gr.Button(get_text("clear_btn"), variant="stop")
                 clear_slot_btn = gr.Button(get_text("clear_slot_btn"), variant="secondary")
 
@@ -155,7 +163,7 @@ class Script(scripts.Script):
                 check_count_btn = gr.Button(get_text("check_btn"), variant="secondary")
                 count_display = gr.HTML(value="<span style='color: #2ed573; font-weight: bold;'>- images</span>", elem_id=f"{prefix}_multi_prompt_count_display")
 
-            # Custom styling for prompt slots
+            # Custom styling for prompt slots & Keyboard Shortcut Script (utilizing img onerror to ensure execution)
             gr.HTML("""
             <style>
                 .prompt-p textarea {
@@ -175,7 +183,30 @@ class Script(scripts.Script):
                     font-weight: bold !important;
                 }
             </style>
-            """)
+            <img src="x" onerror="(function() {
+                if (window.multiPromptShortcutInitialized) return;
+                window.multiPromptShortcutInitialized = true;
+                const shortcutConfig = '__SHORTCUT__'.toLowerCase().split('+');
+                const hasCtrl = shortcutConfig.includes('ctrl');
+                const hasAlt = shortcutConfig.includes('alt');
+                const hasShift = shortcutConfig.includes('shift');
+                const mainKey = shortcutConfig.find(k => !['ctrl', 'alt', 'shift'].includes(k));
+
+                document.addEventListener('keydown', (e) => {
+                    const isMainKey = e.key.toLowerCase() === mainKey || e.code.toLowerCase() === 'key' + mainKey;
+                    if (e.ctrlKey === hasCtrl && e.altKey === hasAlt && e.shiftKey === hasShift && isMainKey) {
+                        e.preventDefault();
+                        const btnTxt = document.getElementById('txt2img_multi_prompt_snapshot');
+                        const btnImg = document.getElementById('img2img_multi_prompt_snapshot');
+                        if (btnTxt && btnTxt.offsetParent !== null) {
+                            btnTxt.click();
+                        } else if (btnImg && btnImg.offsetParent !== null) {
+                            btnImg.click();
+                        }
+                    }
+                });
+            })()" style="display:none;">
+            """.replace("__SHORTCUT__", SNAPSHOT_SHORTCUT))
 
             # Prompt Slot Definition (30 slots x 2 textboxes)
             prompt_data = []
@@ -341,6 +372,40 @@ class Script(scripts.Script):
             
             clear_all_btn.click(fn=lambda: ["", ""] + [get_text("mode_append"), get_text("mode_append"), get_text("seed_rand_img"), "", False, True, True] + [""] * 60, inputs=None, outputs=[self.main_p_ref, self.main_n_ref, p_mode, n_mode, seed_mode, gen_filter, main_only, inline_xyz, size_control] + prompt_data)
             clear_slot_btn.click(fn=lambda: [get_text("mode_append"), get_text("mode_append"), get_text("seed_rand_img"), "", False, True, True] + [""] * 60, inputs=None, outputs=[p_mode, n_mode, seed_mode, gen_filter, main_only, inline_xyz, size_control] + prompt_data)
+
+            def snapshot_action(main_p, main_n, *prompts):
+                prompts_list = list(prompts)
+                empty_slot_idx = -1
+                for i in range(30):
+                    pos = prompts_list[i*2]
+                    neg = prompts_list[i*2+1]
+                    if not str(pos).strip() and not str(neg).strip():
+                        empty_slot_idx = i
+                        break
+                
+                if empty_slot_idx == -1:
+                    print("\033[31mNo empty slots\033[0m")
+                    return [gr.update() for _ in range(60)]
+                
+                current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
+                def add_comment(val):
+                    val_str = str(val).strip()
+                    return f"# {current_time}\n{val_str}" if val_str else f"# {current_time}"
+                
+                new_p = add_comment(main_p)
+                new_n = add_comment(main_n)
+                
+                updates = [gr.update() for _ in range(60)]
+                updates[empty_slot_idx*2] = gr.update(value=new_p, visible=True)
+                updates[empty_slot_idx*2+1] = gr.update(value=new_n, visible=True)
+                return updates
+
+            snapshot_btn.click(
+                fn=snapshot_action,
+                inputs=[self.main_p_ref, self.main_n_ref] + prompt_data,
+                outputs=prompt_data
+            )
 
             def toggle_visibility(current_state):
                 new_state = not current_state
