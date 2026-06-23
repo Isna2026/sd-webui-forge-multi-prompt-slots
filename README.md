@@ -86,6 +86,12 @@ To reduce the risk of freezing or crashing, the maximum number of images per gen
 * **Clear Slots**
   Clears prompts in all slots.
 
+* **Snapshot**  
+  * Clicking Snapshot button copies the contents of the main prompts (positive/negative) into the first available empty slot.  
+  * A timestamp is automatically prepended to the prompt as a comment upon copying.  
+  * If there are no empty slots available, "no empty slots" will be displayed in the console.  
+  * Can be triggered via the shortcut `Ctrl+Alt+A`. (You can change the hotkey by modifying the `SNAPSHOT_SHORTCUT` setting at the top of the script.)
+
 * **Check Image Count**
   Calculates and displays how many images will be generated based on current conditions (prompts, batch count). Displays yellow for >100, red for >500. Recommended when Inline XYZ or Size Control is enabled. If the count seems off, check for unclosed brackets `@@` or `$$`. Note: Batch size is ignored; only batch count works with this script active.
 
@@ -255,6 +261,12 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
 
 * スロットをクリア
 　クリックすると、全スロットのプロンプトをクリア
+
+* スナップショット(Snapshot)  
+　クリックすると、メインプロンプト(positive/negative)の内容が空スロットにコピーされます。 
+　コピーの際、先頭にコメントとして日時が付加されます。  
+    空スロットがない場合には、コンソールにno empty slotsと表示されます。  
+    Ctrl+Alt+Aでショートカットできます。(ショートカットキーは、コード先頭に記載のSNAPSHOT\_SHORTCUTの設定をかえることで変更可能です。)   
 
 * 事前に枚数を確認
    クリックすると現在の条件(プロンプト、バッチ回数)で何枚生成されるか計算して表示(100枚以上で黄色表示、500枚以上で赤色表示)
