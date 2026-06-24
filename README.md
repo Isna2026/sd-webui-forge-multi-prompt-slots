@@ -59,7 +59,8 @@ To reduce the risk of freezing or crashing, the maximum number of images per gen
   * `1,3-5,9-`: Slots 1, 3, 4, 5, and 9 onwards.  
   * `3-1,10,4-9`:Generates in the exact order of 3, 2, 1, 10, 4, 5, 6, 7, 8, 9  
   * `1,1,1,2`:Generates slot 1 three times, followed by slot 2.  
-  * `main` or `-1`: Ignores slots and generates only using the main prompt.  
+  * `main` or `-1`: Ignores slots and generates only using the main prompt.
+    Note that "main" (or -1) cannot be used in combination with other slot numbers.  
 
 * **Main Only (Ignore Slots)**
   When checked, ignores slot prompts and uses only the main prompt for generation.
@@ -234,7 +235,8 @@ SD Web UIの標準機能の、Prompts from file or textboxは使いにくい、�
     * `1,3-5,9-`: 1,3,4,5,9以降を生成  
     * `3-1,10,4-9`:3,2,1,10,4,5,6,7,8,9の順に生成  
     * `1,1,1,2`:1を3回生成した後に2を生成  
-    * `main` or `-1`: slotを無視してメイン欄のプロンプトのみで生成  
+    * `main` or `-1`: slotを無視してメイン欄のプロンプトのみで生成
+      (main"(もしくは-1)は他のスロット番号と組み合わせて使うことはできません。)
 
 * Mainのみ生成(スロット無視) (Main Only (Ignore Slots))
 　チェックするとslotの記述を無視してメインのプロンプトのみで生成
